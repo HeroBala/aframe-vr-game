@@ -20,8 +20,8 @@ document.querySelector('#app').innerHTML = `
         </a-assets>
         
         <!-- Lights -->
-        <a-entity light="type: ambient; color: #FFF; intensity: 0.01;"></a-entity>
-        <a-entity light="type: directional; color: #FFF; intensity: 0.2; castShadow: true; shadow-camera-automatic: [shadow]; shadowMapWidth: 1024; shadowMapHeight: 1024;" position="-1 1 0"></a-entity>
+        <a-entity light="type: ambient; color: #FFF; intensity: 0.5;"></a-entity>
+        <a-entity light="type: directional; color: #FFF; intensity: 0.5; castShadow: true; shadow-camera-automatic: [shadow]; shadowMapWidth: 1024; shadowMapHeight: 1024;" position="-1 1 0"></a-entity>
   
         <!-- Environment -->
         <!--  sky    --> <a-sky src="#sky"></a-sky>
@@ -34,7 +34,7 @@ document.querySelector('#app').innerHTML = `
 
   
         <!-- Camera -->
-        <a-entity camera look-controls wasd-controls position="0 3 3" rotation="-90 0 0"></a-entity>
+        <a-entity camera wasd-controls="acceleration: 30" look-controls position="0 3 3"></a-entity>
 
         <!-- Obstacles -->
         <a-sphere obstacle="strength: 9999" dynamic-body="mass: 0.3;" position="2 1 -3" radius="0.5" color="orange" shadow="cast: true"></a-sphere>
@@ -43,7 +43,7 @@ document.querySelector('#app').innerHTML = `
         <!-- Character -->
         <a-entity character dynamic-body="mass: 1; angularDamping: 1; shape: box;" position="-2 0.4 -3">
             <a-entity gltf-model="#eva" animation-mixer="clip: idle;" position="0 0 0" rotation="0 90 0" scale="1 1 1" shadow="cast: true">
-                <a-entity light="type: spot; penumbra: 0.2; angle: 50; intensity: 3; distance: 7; castShadow: true;" position="0 1 0" rotation="0 180 0"></a-entity>
+                <a-entity light="type: spot; penumbra: 0.2; angle: 50; intensity: 3 distance: 7; castShadow: true;" position="0 1 0" rotation="0 180 0"></a-entity>
             </a-entity>
             <a-entity raycaster="direction: 1 0 0; far: 2;" position="0 0.5 0" rotation="0 0 0" collider-check></a-entity>
         </a-entity>
