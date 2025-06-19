@@ -25,11 +25,16 @@ document.querySelector('#app').innerHTML = `
   
         <!-- Environment -->
         <!--  sky    --> <a-sky src="#sky"></a-sky>
-        <!--  ground --> <a-box static-body="friction: 0;" position="0 0 -2" width="30" height="0.2" depth="10" material="src: #grass; repeat: 1 1;" shadow="receive: true"></a-box> 
-        <!--  tree   --> <a-entity static-body gltf-model="#tree" position="2 0 -6" scale="0.2 0.2 0.2" shadow="cast: true;"></a-entity> 
+        <!--  ground --> <a-box static-body="friction: 0;" position="0 0 0" width="30" height="0.2" depth="10" material="src: #grass; repeat: 1 1;" shadow="receive: true"></a-box> 
+        <!--  ground --> <a-box static-body="friction: 0;" position="0 0.5 -15" width="30" height="0.2" depth="10" material="src: #grass; repeat: 1 1;" shadow="receive: true"></a-box> 
+        <!--  ground --> <a-box static-body="friction: 0;" position="0 0.5 15" width="30" height="0.2" depth="10" material="src: #grass; repeat: 1 1;" shadow="receive: true"></a-box>
+        <!--  ground --> <a-box static-body="friction: 0;" position="-15 0.5 0" width="10" height="0.2" depth="30" material="src: #grass; repeat: 1 1;" shadow="receive: true"></a-box>
+        <!--
+        <!--  tree   --> <a-entity static-body gltf-model="#tree" position="2 0 -6" scale="0.2 0.2 0.2" shadow="cast: true;"></a-entity>
+
   
         <!-- Camera -->
-        <a-entity camera position="0 3 3" rotation="-20 0 0"></a-entity>
+        <a-entity camera look-controls wasd-controls position="0 3 3" rotation="-90 0 0"></a-entity>
 
         <!-- Obstacles -->
         <a-sphere obstacle="strength: 9999" dynamic-body="mass: 0.3;" position="2 1 -3" radius="0.5" color="orange" shadow="cast: true"></a-sphere>
