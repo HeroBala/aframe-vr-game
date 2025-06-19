@@ -4,10 +4,10 @@ AFRAME.registerComponent('character', {
 
         // Define movement directions and their corresponding velocity vectors
         this.directions = {
-            'back': new CANNON.Vec3(0, 0, 5),
-            'right': new CANNON.Vec3(5, 0, 0),
-            'front': new CANNON.Vec3(0, 0, -5),
-            'left': new CANNON.Vec3(-5, 0, 0),
+            'back': new CANNON.Vec3(0, 0, 7),
+            'right': new CANNON.Vec3(7, 0, 0),
+            'front': new CANNON.Vec3(0, 0, -7),
+            'left': new CANNON.Vec3(-7, 0, 0),
         };
 
         this.health = 100; // Character's health
