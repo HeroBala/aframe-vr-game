@@ -1,5 +1,3 @@
-let score = 0;
-
 AFRAME.registerComponent('score-system', {
   schema: {
     points: { type: 'int', default: 10 }
@@ -8,43 +6,48 @@ AFRAME.registerComponent('score-system', {
   init: function () {
     this.orbEl = this.el;
 
-    this.orbEl.addEventListener('collide', (e) => {
-      const collider = e.detail.body.el;
-      console.log('[Score System] Collision with:', collider);
+    this._collected = false; // ✅ flag to prevent multiple triggers
 
+    this.orbEl.addEventListener('collide', (e) => {
+      if (this._collected) return; // ✅ already collected once
+
+      const collider = e.detail.body.el;
       if (!collider || !collider.hasAttribute('character')) return;
 
-      // Increment score
-      score += this.data.points;
+      this._collected = true; // ✅ mark as collected
 
-      // Update score display
+      // ✅ Increment score
+      window.score += this.data.points;
+
+      // ✅ Update score HUD
       const scoreText = document.querySelector('#scoreText');
       if (scoreText) {
-        scoreText.setAttribute('text', 'value', `Score: ${score}`);
+        scoreText.setAttribute('text', 'value', `Score: ${window.score}`);
       }
 
-      // Update high score
+      // ✅ Update high score
       const highScore = parseInt(localStorage.getItem('highScore') || '0');
-      if (score > highScore) {
-        localStorage.setItem('highScore', score);
+      if (window.score > highScore) {
+        localStorage.setItem('highScore', window.score);
       }
 
-      // 🔒 Prevent physics freeze by hiding first
-      this.orbEl.setAttribute('visible', false);
+      // ✅ Disable and remove orb
+      this.orbEl.setAttribute('visible', false); // Hide
+      this.orbEl.removeAttribute('score-system'); // Prevent further use
 
-      // Safely remove physics body from world if it exists
+      // Remove physics body properly
       if (this.orbEl.body && this.el.sceneEl.systems.physics) {
         this.el.sceneEl.systems.physics.world.removeBody(this.orbEl.body);
       }
 
-      // Remove orb from DOM after physics resolves
+      // Fully remove from DOM after a short delay (optional for cleanup)
       setTimeout(() => {
         if (this.orbEl.parentNode) {
           this.orbEl.parentNode.removeChild(this.orbEl);
         }
-      }, 100); // Delay ensures physics cleanup
+      }, 100);
 
-      console.log(`[Score System] Collected. Score: ${score}`);
+      console.log(`[Score System] Orb collected. Score: ${window.score}`);
     });
   }
 });

@@ -3,10 +3,10 @@ AFRAME.registerComponent('character', {
         console.log('Hello, character!');
 
         this.directions = {
-            'back': new CANNON.Vec3(0, 0, 5),
-            'right': new CANNON.Vec3(5, 0, 0),
-            'front': new CANNON.Vec3(0, 0, -5),
-            'left': new CANNON.Vec3(-5, 0, 0),
+            'back': new CANNON.Vec3(0, 0, 7),
+            'right': new CANNON.Vec3(7, 0, 0),
+            'front': new CANNON.Vec3(0, 0, -7),
+            'left': new CANNON.Vec3(-7, 0, 0),
         };
 
         this.health = 100;
@@ -127,12 +127,19 @@ AFRAME.registerComponent('character', {
             this.collisionBodies.splice(0, this.collisionBodies.length);
         }, 500);
 
-        this.health -= 40;
-        console.log('Health', this.health);
+       this.health -= 40;
+console.log('Health', this.health);
 
-        if (this.health < 0) {
-            document.getElementById('game-over').style.display = 'block';
-        }
+const healthText = document.querySelector('#healthText');
+if (healthText) {
+  healthText.setAttribute('text', 'value', `Health: ${this.health}`);
+}
+
+if (this.health < 0) {
+  document.getElementById('game-over').style.display = 'block';
+}
+
+otherBody.el.emit('collide-with-character');
 
         otherBody.el.emit('collide-with-character');
     }
