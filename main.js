@@ -26,29 +26,30 @@ document.querySelector('#app').innerHTML = `
       <img src="/models/night-sky.jpg" id="sky">
       <a-asset-item id="car" src="/models/vehicles/military/jeep.glb"></a-asset-item>
       <a-asset-item id="motorbike" src="/models/vehicles/military/military_motorbike.glb"></a-asset-item>
-    </a-assets>
+      <a-asset-item id="coin" src="/models/coin.glb"></a-asset-item>    
+      </a-assets>
 
     <!-- Lights -->
     <a-entity light="type: ambient; color: #FFF; intensity: 1;"></a-entity>
     <a-entity light="type: directional; color: #FFF; intensity: 0.5; castShadow: true;" position="-1 1 0"></a-entity>
 
     <!-- Environment -->
-    <a-sky src="#sky"></a-sky>
+    <a-sky src="#sky" radius="10000"></a-sky>
 
     <!-- Generate Platforms Dynamically -->
     <a-entity sky-stairs></a-entity>
 
     <!-- Static Models -->
     <a-entity static-body gltf-model="#tree" position="7 0 0.5" scale="0.2 0.5 0.2" shadow></a-entity>
-    <a-entity static-body gltf-model="#car" position="0 0.656 -13" scale="1.5 1 1" shadow></a-entity>
-    <a-entity static-body gltf-model="#motorbike" position="-22 0.6 -0.915" scale="1.2 1 0.5" shadow></a-entity>
+    <a-entity static-body gltf-model="#car" position="-10 1.5 -10" scale="1.5 1 1" shadow></a-entity>
+    <a-entity static-body gltf-model="#motorbike" position="8 3 -18" scale="1.2 1 0.5" shadow></a-entity>
 
     <!-- Obstacles -->
     <a-sphere obstacle="strength: 9999" dynamic-body="mass: 0.3;" position="2 1 -3" radius="0.5" color="orange" shadow></a-sphere>
     <a-sphere obstacle="strength: 9999" position="2 1 -1" radius="0.5" material="shader: glowing; transparent: true; color1: red; color2: blue;"></a-sphere>
 
     <!-- Character -->
-    <a-entity character dynamic-body="mass: 1; angularDamping: 1; shape: box;" position="-2 0.4 -3">
+    <a-entity character dynamic-body="mass: 1; angularDamping: 1; shape: box;" position="-10 10.4 -3">
       <a-entity gltf-model="#eva" animation-mixer="clip: idle;" position="0 0 0" rotation="0 90 0" scale="1 1 1" shadow>
         <a-entity light="type: spot; penumbra: 0.2; angle: 50; intensity: 3; distance: 7;" position="0 1 0" rotation="0 180 0"></a-entity>
       </a-entity>
@@ -63,34 +64,34 @@ document.querySelector('#app').innerHTML = `
     </a-entity>
   </a-scene>
 `;
-
-// ✅ Dynamically Add Orbs
+// ✅ Dynamically Add Coins
 window.addEventListener('DOMContentLoaded', () => {
   const scene = document.querySelector('a-scene');
 
-  const orbTemplate = (position) => {
-    const orb = document.createElement('a-entity');
-    orb.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
-    orb.setAttribute('material', 'color: orange; emissive: yellow; emissiveIntensity: 0.6');
-    orb.setAttribute('position', position);
-    orb.setAttribute('class', 'orb');
-    orb.setAttribute('static-body', '');
-    orb.setAttribute('score-system', '');
-    return orb;
+  const coinTemplate = (position) => {
+    const coin = document.createElement('a-entity');
+    coin.setAttribute('gltf-model', '#obstacle');
+    coin.setAttribute('position', position);
+    coin.setAttribute('scale', '7 7 7');
+    coin.setAttribute('class', 'coin');
+    coin.setAttribute('obstacle', 'strength: 1');
+    coin.setAttribute('score-system', '');
+    coin.setAttribute('dynamic-body', 'mass: 0.1;');
+    return coin;
   };
 
-  const orbPositions = [
-    '0 1 0',
-    '5 1 -2',
-    '-5 1 2',
-    '0 1 -15',
-    '0 1 15',
-    '-25 1 0',
-    '-36 2.5 0'
+  const coinPositions = [
+    '1 1 0',
+    '3 1 -2',
+    '-3 1 2',
+    '0 1 -10',
+    '0 1 10',
+    '-10 1 0',
+    '-15 2.5 0'
   ];
 
-  orbPositions.forEach(pos => {
-    const orb = orbTemplate(pos);
-    scene.appendChild(orb);
+  coinPositions.forEach(pos => {
+    const coin = coinTemplate(pos);
+    scene.appendChild(coin);
   });
 });

@@ -4,9 +4,9 @@ AFRAME.registerComponent('character', {
 
         this.directions = {
             'back': new CANNON.Vec3(0, 0, 7),
-            'right': new CANNON.Vec3(7, 0, 0),
+            'right': new CANNON.Vec3(5, 0, 0),
             'front': new CANNON.Vec3(0, 0, -7),
-            'left': new CANNON.Vec3(-7, 0, 0),
+            'left': new CANNON.Vec3(-5, 0, 0),
         };
 
         this.health = 100;

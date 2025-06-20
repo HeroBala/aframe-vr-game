@@ -18,34 +18,91 @@ AFRAME.registerComponent('sky-stairs', {
       box.setAttribute('position', `0 ${y} ${z}`);
       box.setAttribute('material', 'src: #grass;');
       scene.appendChild(box);
+      // 🟦 2. Random Tree
+    if (Math.random() < 0.4) {
+      const randomX = (Math.random() * 26) - 13;
+      const randomZ = z + (Math.random() * 8) - 4;
+      const scale = 0.2 + Math.random() * 0.1;
+      const rotationY = Math.floor(Math.random() * 360);
 
-      // 🌲 2. Tree
       const tree = document.createElement('a-entity');
       tree.setAttribute('gltf-model', '#tree');
-      tree.setAttribute('scale', '0.25 0.25 0.25');
-      tree.setAttribute('position', `-10 ${y + 0.1} ${z}`);
+      tree.setAttribute('scale', `${scale} ${scale} ${scale}`);
+      tree.setAttribute('rotation', `0 ${rotationY} 0`);
+      tree.setAttribute('position', `${randomX} ${y + 0.1} ${randomZ}`);
+      tree.setAttribute('static-body', ''); // Optional: block movement
       scene.appendChild(tree);
+    }
 
-      // 🟠 3. Scoring Orb – Offset to the Right
-      const orb = document.createElement('a-entity');
-      orb.setAttribute('geometry', 'primitive: sphere; radius: 0.5');
-      orb.setAttribute('material', 'color: orange; emissive: yellow; emissiveIntensity: 0.6');
-      orb.setAttribute('position', `10 ${y + 1} ${z}`); // Offset right
-      orb.setAttribute('class', 'orb');
-      orb.setAttribute('static-body', '');
-      orb.setAttribute('score-system', '');
-      scene.appendChild(orb);
 
-      // 🔴 4. Damage Zone – Centered on Platform (but skip first)
+      // 🟡 3. Coin – Random on Platform
+      if (Math.random() < 0.5) {
+        const randomX = (Math.random() * 26) - 13;  // x-range: [-13, 13]
+        const randomZ = z + (Math.random() * 8) - 4; // z-range: within platform
+
+        const coin = document.createElement('a-entity');
+        coin.setAttribute('gltf-model', '#coin'); // ✅ Use your correct model ID
+        coin.setAttribute('scale', '5 5 5');
+        coin.setAttribute('position', `${randomX} ${y + 2} ${randomZ}`);
+        coin.setAttribute('class', 'coin');
+        coin.setAttribute('dynamic-body', 'mass: 0.1;');
+        coin.setAttribute('score-system', '');
+
+        // 🔁 Spin animation
+        coin.setAttribute('animation__spin', {
+          property: 'rotation',
+          to: '0 360 0',
+          loop: true,
+          dur: 2000,
+          easing: 'linear'
+        });
+
+        // ⬆️⬇️ Float animation
+        coin.setAttribute('animation__float', {
+          property: 'position',
+          dir: 'alternate',
+          dur: 1000,
+          easing: 'easeInOutSine',
+          loop: true,
+          to: `${randomX} ${y + 2.3} ${randomZ}`
+        });
+
+        scene.appendChild(coin);
+      }
+
+      // 🔴 4. Animated Damage Zone (Left to Right Sweep)
       if (i !== 0) {
         const hazard = document.createElement('a-box');
         hazard.setAttribute('width', '3');
         hazard.setAttribute('height', '0.05');
         hazard.setAttribute('depth', '4');
-        hazard.setAttribute('position', `0 ${y + 0.125} ${z}`); // Center of platform
+        hazard.setAttribute('position', `-10 ${y + 0.125} ${z}`); // Start from left
         hazard.setAttribute('material', 'color: red; opacity: 0.8; transparent: true');
         hazard.setAttribute('damage-zone', 'damage: 10');
         hazard.setAttribute('static-body', '');
+
+        // 🔁 Animate left to right
+        hazard.setAttribute('animation__move', {
+          property: 'position',
+          dir: 'alternate',
+          dur: 4000,
+          easing: 'easeInOutSine',
+          loop: true,
+          from: `-10 ${y + 0.125} ${z}`,
+          to: `10 ${y + 0.125} ${z}`
+        });
+
+        // 🌈 Optional: Pulse color animation
+        hazard.setAttribute('animation__color', {
+          property: 'material.color',
+          dir: 'alternate',
+          dur: 500,
+          easing: 'easeInOutSine',
+          loop: true,
+          from: 'red',
+          to: '#ff8888'
+        });
+
         scene.appendChild(hazard);
       }
     }
