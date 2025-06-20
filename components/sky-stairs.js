@@ -18,37 +18,36 @@ AFRAME.registerComponent('sky-stairs', {
       box.setAttribute('position', `0 ${y} ${z}`);
       box.setAttribute('material', 'src: #grass;');
       scene.appendChild(box);
-      // 🟦 2. Random Tree
-    if (Math.random() < 0.4) {
-      const randomX = (Math.random() * 26) - 13;
-      const randomZ = z + (Math.random() * 8) - 4;
-      const scale = 0.2 + Math.random() * 0.1;
-      const rotationY = Math.floor(Math.random() * 360);
 
-      const tree = document.createElement('a-entity');
-      tree.setAttribute('gltf-model', '#tree');
-      tree.setAttribute('scale', `${scale} ${scale} ${scale}`);
-      tree.setAttribute('rotation', `0 ${rotationY} 0`);
-      tree.setAttribute('position', `${randomX} ${y + 0.1} ${randomZ}`);
-      tree.setAttribute('static-body', ''); // Optional: block movement
-      scene.appendChild(tree);
-    }
+      // 🌲 2. Random Tree
+      if (Math.random() < 0.4) {
+        const randomX = (Math.random() * 26) - 13;
+        const randomZ = z + (Math.random() * 8) - 4;
+        const scale = 0.2 + Math.random() * 0.1;
+        const rotationY = Math.floor(Math.random() * 360);
 
+        const tree = document.createElement('a-entity');
+        tree.setAttribute('gltf-model', '#tree');
+        tree.setAttribute('scale', `${scale} ${scale} ${scale}`);
+        tree.setAttribute('rotation', `0 ${rotationY} 0`);
+        tree.setAttribute('position', `${randomX} ${y + 0.1} ${randomZ}`);
+        tree.setAttribute('static-body', '');
+        scene.appendChild(tree);
+      }
 
-      // 🟡 3. Coin – Random on Platform
+      // 🪙 3. Coin
       if (Math.random() < 0.5) {
-        const randomX = (Math.random() * 26) - 13;  // x-range: [-13, 13]
-        const randomZ = z + (Math.random() * 8) - 4; // z-range: within platform
+        const randomX = (Math.random() * 26) - 13;
+        const randomZ = z + (Math.random() * 8) - 4;
 
         const coin = document.createElement('a-entity');
-        coin.setAttribute('gltf-model', '#coin'); // ✅ Use your correct model ID
+        coin.setAttribute('gltf-model', '#coin');
         coin.setAttribute('scale', '5 5 5');
         coin.setAttribute('position', `${randomX} ${y + 2} ${randomZ}`);
         coin.setAttribute('class', 'coin');
         coin.setAttribute('dynamic-body', 'mass: 0.1;');
         coin.setAttribute('score-system', '');
 
-        // 🔁 Spin animation
         coin.setAttribute('animation__spin', {
           property: 'rotation',
           to: '0 360 0',
@@ -57,7 +56,6 @@ AFRAME.registerComponent('sky-stairs', {
           easing: 'linear'
         });
 
-        // ⬆️⬇️ Float animation
         coin.setAttribute('animation__float', {
           property: 'position',
           dir: 'alternate',
@@ -70,18 +68,22 @@ AFRAME.registerComponent('sky-stairs', {
         scene.appendChild(coin);
       }
 
-      // 🔴 4. Animated Damage Zone (Left to Right Sweep)
+      // 🧟 4. Modular Zombie (new)
+      const zombieEntity = document.createElement('a-entity');
+      zombieEntity.setAttribute('zombie', { y: y, z: z });
+      scene.appendChild(zombieEntity);
+
+      // 🔴 5. Animated Damage Zone
       if (i !== 0) {
         const hazard = document.createElement('a-box');
         hazard.setAttribute('width', '3');
         hazard.setAttribute('height', '0.05');
         hazard.setAttribute('depth', '4');
-        hazard.setAttribute('position', `-10 ${y + 0.125} ${z}`); // Start from left
+        hazard.setAttribute('position', `-10 ${y + 0.125} ${z}`);
         hazard.setAttribute('material', 'color: red; opacity: 0.8; transparent: true');
         hazard.setAttribute('damage-zone', 'damage: 10');
         hazard.setAttribute('static-body', '');
 
-        // 🔁 Animate left to right
         hazard.setAttribute('animation__move', {
           property: 'position',
           dir: 'alternate',
@@ -92,7 +94,6 @@ AFRAME.registerComponent('sky-stairs', {
           to: `10 ${y + 0.125} ${z}`
         });
 
-        // 🌈 Optional: Pulse color animation
         hazard.setAttribute('animation__color', {
           property: 'material.color',
           dir: 'alternate',

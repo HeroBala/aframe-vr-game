@@ -11,6 +11,7 @@ import './shaders/glowing'
 import './components/score-system'
 import './components/sky-stairs'
 import './components/damage-zone'
+import './components/zombie'
 // ✅ Define global score
 window.score = 0;
 
@@ -26,7 +27,8 @@ document.querySelector('#app').innerHTML = `
       <img src="/models/night-sky.jpg" id="sky">
       <a-asset-item id="car" src="/models/vehicles/military/jeep.glb"></a-asset-item>
       <a-asset-item id="motorbike" src="/models/vehicles/military/military_motorbike.glb"></a-asset-item>
-      <a-asset-item id="coin" src="/models/coin.glb"></a-asset-item>    
+      <a-asset-item id="coin" src="/models/coin.glb"></a-asset-item>
+      <a-asset-item id="zombie" src="/models/zombie.glb"></a-asset-item>    
       </a-assets>
 
     <!-- Lights -->
@@ -49,7 +51,7 @@ document.querySelector('#app').innerHTML = `
     <a-sphere obstacle="strength: 9999" position="2 1 -1" radius="0.5" material="shader: glowing; transparent: true; color1: red; color2: blue;"></a-sphere>
 
     <!-- Character -->
-    <a-entity character dynamic-body="mass: 1; angularDamping: 1; shape: box;" position="-10 10.4 -3">
+    <a-entity character dynamic-body="mass: 1; angularDamping: 1; shape: box;" position="-1 10 -3">
       <a-entity gltf-model="#eva" animation-mixer="clip: idle;" position="0 0 0" rotation="0 90 0" scale="1 1 1" shadow>
         <a-entity light="type: spot; penumbra: 0.2; angle: 50; intensity: 3; distance: 7;" position="0 1 0" rotation="0 180 0"></a-entity>
       </a-entity>
