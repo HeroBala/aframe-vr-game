@@ -14,6 +14,7 @@ import './components/damage-zone'
 import './components/zombie'
 import './components/zombie-kill'
 import './components/zombie-movement'
+import './components/health-system'
 // ✅ Define global score
 window.score = 0;
 
@@ -30,7 +31,8 @@ document.querySelector('#app').innerHTML = `
       <a-asset-item id="car" src="/models/vehicles/military/jeep.glb"></a-asset-item>
       <a-asset-item id="motorbike" src="/models/vehicles/military/military_motorbike.glb"></a-asset-item>
       <a-asset-item id="coin" src="/models/coin.glb"></a-asset-item>
-      <a-asset-item id="zombie" src="/models/zombie.glb"></a-asset-item>    
+      <a-asset-item id="zombie" src="/models/zombie.glb"></a-asset-item>
+      <a-asset-item id="health" src="/models/Health.glb"></a-asset-item>    
       </a-assets>
 
     <!-- Lights -->

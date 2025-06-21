@@ -107,6 +107,30 @@ AFRAME.registerComponent('sky-stairs', {
 
         scene.appendChild(hazard);
       }
+      // 💚 6. Health Model (randomly on ground)
+      if (Math.random() < 0.15) {
+        const randomX = (Math.random() * 26) - 13;
+        const randomZ = z + (Math.random() * 8) - 4;
+
+        const health = document.createElement('a-entity');
+        health.setAttribute('gltf-model', '#health');
+        health.setAttribute('scale', '2 2 2');
+        health.setAttribute('position', `${randomX} ${y + 0.3} ${randomZ}`);
+        health.setAttribute('class', 'health');
+        health.setAttribute('dynamic-body', 'mass: 0.1;');
+        health.setAttribute('health-system', '');
+
+        health.setAttribute('animation__float', {
+          property: 'position',
+          dir: 'alternate',
+          dur: 1200,
+          easing: 'easeInOutSine',
+          loop: true,
+          to: `${randomX} ${y + 0.6} ${randomZ}`
+        });
+
+        scene.appendChild(health);
+      }
     }
   }
 });

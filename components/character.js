@@ -72,7 +72,7 @@ AFRAME.registerComponent('character', {
     jump() {
         if (this.isJumping || !this.el.body) return;
 
-        this.el.body.velocity.y = 5;
+        this.el.body.velocity.y = 7;
         this.isJumping = true;
 
         this.characterModel.setAttribute('animation-mixer', {
