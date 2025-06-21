@@ -21,7 +21,7 @@ AFRAME.registerComponent('zombie', {
     zombie.setAttribute('dynamic-body', 'mass:1; shape: box;');
 
     // 🧠 ADD THESE TWO LINES:
-    zombie.setAttribute('zombie-kill', 'damage: 100');
+    zombie.setAttribute('zombie-kill', 'damage: 30');
     zombie.setAttribute('class', 'zombie');
 
     zombie.setAttribute('zombie-move', {

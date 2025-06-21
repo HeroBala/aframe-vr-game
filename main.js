@@ -34,7 +34,11 @@ document.querySelector('#app').innerHTML = `
       <a-asset-item id="zombie" src="/models/zombie.glb"></a-asset-item>
       <a-asset-item id="health" src="/models/Health.glb"></a-asset-item>    
       </a-assets>
+    <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10; color: white; background: rgba(0,0,0,0.7); padding: 12px 24px; border-radius: 8px; font-size: 1.2em; text-align: center;">
+Use the arrow keys to move | Press Space to jump  
+💀 Avoid zombies, 🚗 dodge obstacles, 💰 collect coins, and 💚 pick up health to survive!
 
+    </div>
     <!-- Lights -->
     <a-entity light="type: ambient; color: #FFF; intensity: 1;"></a-entity>
     <a-entity light="type: directional; color: #FFF; intensity: 0.5; castShadow: true;" position="-1 1 0"></a-entity>

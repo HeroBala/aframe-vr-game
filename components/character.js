@@ -10,6 +10,7 @@ AFRAME.registerComponent('character', {
         };
 
         this.health = 100;
+        window.health=this.health 
         this.collisionBodies = [];
         this.velocity = null;
         this.rotationY = 90;
@@ -128,6 +129,7 @@ AFRAME.registerComponent('character', {
         }, 500);
 
        this.health -= 40;
+       window.health = this.health;
 console.log('Health', this.health);
 
 const healthText = document.querySelector('#healthText');
