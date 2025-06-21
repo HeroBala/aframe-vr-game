@@ -6,7 +6,7 @@ AFRAME.registerComponent('zombie', {
 
   init: function () {
     const scene = this.el.sceneEl;
-    if (Math.random() > 0.2) return; // 20% chance to spawn
+    if (Math.random() > 0.6) return;
 
     const startX = -10 + Math.random() * 3;
     const endX = 10 - Math.random() * 3;
@@ -18,48 +18,23 @@ AFRAME.registerComponent('zombie', {
     zombie.setAttribute('scale', '0.3 0.3 0.3');
     zombie.setAttribute('position', `${startX} ${zombieY} ${walkZ}`);
     zombie.setAttribute('animation-mixer', 'clip: *; loop: repeat');
-    zombie.setAttribute('static-body', '');
+    zombie.setAttribute('dynamic-body', 'mass:1; shape: box;');
 
-    // Walk Animation
-    zombie.setAttribute('animation__move', {
-      property: 'position',
-      from: `${startX} ${zombieY} ${walkZ}`,
-      to: `${endX} ${zombieY} ${walkZ}`,
-      dur: 6000,
-      easing: 'linear',
-      loop: true,
-      dir: 'alternate'
-    });
+    // 🧠 ADD THESE TWO LINES:
+    zombie.setAttribute('zombie-kill', 'damage: 100');
+    zombie.setAttribute('class', 'zombie');
 
-    // Face Movement Direction (Realistic Flip)
+    zombie.setAttribute('zombie-move', {
+  speed: 5,
+  fromX: startX,
+  toX: endX
+});
+
     zombie.setAttribute('zombie-rotator', {
       fromX: startX,
       toX: endX
     });
 
     scene.appendChild(zombie);
-  }
-});
-
-AFRAME.registerComponent('zombie-rotator', {
-  schema: {
-    fromX: { type: 'number' },
-    toX: { type: 'number' }
-  },
-  init: function () {
-    this.forward = this.data.toX > this.data.fromX;
-    this.el.object3D.rotation.y = this.forward ? Math.PI / 2 : -Math.PI / 2;
-  },
-  tick: function () {
-    const x = this.el.object3D.position.x;
-    const threshold = 0.2;
-
-    if (this.forward && x >= this.data.toX - threshold) {
-      this.el.object3D.rotation.y = -Math.PI / 2;
-      this.forward = false;
-    } else if (!this.forward && x <= this.data.fromX + threshold) {
-      this.el.object3D.rotation.y = Math.PI / 2;
-      this.forward = true;
-    }
   }
 });

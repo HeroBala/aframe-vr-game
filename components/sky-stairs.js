@@ -69,10 +69,11 @@ AFRAME.registerComponent('sky-stairs', {
       }
 
       // 🧟 4. Modular Zombie (new)
+      if (i !==0) {
       const zombieEntity = document.createElement('a-entity');
       zombieEntity.setAttribute('zombie', { y: y, z: z });
       scene.appendChild(zombieEntity);
-
+      }
       // 🔴 5. Animated Damage Zone
       if (i !== 0) {
         const hazard = document.createElement('a-box');

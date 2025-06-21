@@ -12,6 +12,8 @@ import './components/score-system'
 import './components/sky-stairs'
 import './components/damage-zone'
 import './components/zombie'
+import './components/zombie-kill'
+import './components/zombie-movement'
 // ✅ Define global score
 window.score = 0;
 
@@ -65,35 +67,4 @@ document.querySelector('#app').innerHTML = `
       <a-entity raycaster="direction: 1 0 0; far: 2;" position="0 0.5 0" rotation="0 0 0" collider-check></a-entity>
     </a-entity>
   </a-scene>
-`;
-// ✅ Dynamically Add Coins
-window.addEventListener('DOMContentLoaded', () => {
-  const scene = document.querySelector('a-scene');
-
-  const coinTemplate = (position) => {
-    const coin = document.createElement('a-entity');
-    coin.setAttribute('gltf-model', '#obstacle');
-    coin.setAttribute('position', position);
-    coin.setAttribute('scale', '7 7 7');
-    coin.setAttribute('class', 'coin');
-    coin.setAttribute('obstacle', 'strength: 1');
-    coin.setAttribute('score-system', '');
-    coin.setAttribute('dynamic-body', 'mass: 0.1;');
-    return coin;
-  };
-
-  const coinPositions = [
-    '1 1 0',
-    '3 1 -2',
-    '-3 1 2',
-    '0 1 -10',
-    '0 1 10',
-    '-10 1 0',
-    '-15 2.5 0'
-  ];
-
-  coinPositions.forEach(pos => {
-    const coin = coinTemplate(pos);
-    scene.appendChild(coin);
-  });
-});
+`
