@@ -13,10 +13,14 @@ AFRAME.registerComponent('platform-generator', {
     if (!this.player) return;
     const playerZ = this.player.object3D.position.z;
     const neededIndex = Math.floor(playerZ / this.stepDepth);
+
+    // Generate new platforms ahead of the player
     while (this.currentIndex < neededIndex + this.data.range) {
       this.spawnStep(this.currentIndex);
       this.currentIndex++;
     }
+
+    // Clean up old platforms
     while (this.platforms.length > 40) {
       const old = this.platforms.shift();
       old?.removeAttribute('dynamic-body');
@@ -28,6 +32,7 @@ AFRAME.registerComponent('platform-generator', {
     const y = i * this.stepHeight;
     const z = i * this.stepDepth;
 
+    // === Main Ground Platform ===
     const box = document.createElement('a-box');
     box.setAttribute('width', '30');
     box.setAttribute('height', '0.2');
@@ -35,11 +40,14 @@ AFRAME.registerComponent('platform-generator', {
     box.setAttribute('static-body', '');
     box.setAttribute('position', `0 ${y} ${z}`);
     box.setAttribute('material', 'src: #grass');
+    box.setAttribute('class', 'ground'); // ✅ Needed for jump detection
     this.el.appendChild(box);
     this.platforms.push(box);
 
+    // === Optional Random Elements ===
     const chance = (r, cb) => Math.random() < r && cb();
 
+    // 💰 Coins
     chance(0.5, () => {
       const coin = document.createElement('a-entity');
       const x = (Math.random() * 26) - 13;
@@ -53,6 +61,7 @@ AFRAME.registerComponent('platform-generator', {
       this.platforms.push(coin);
     });
 
+    // 🧟 Zombies
     if (i > 0 && Math.random() < 0.6) {
       const zombie = document.createElement('a-entity');
       zombie.setAttribute('zombie', { y, z });
@@ -60,6 +69,7 @@ AFRAME.registerComponent('platform-generator', {
       this.platforms.push(zombie);
     }
 
+    // 🔥 Damage zones
     chance(0.3, () => {
       const hazard = document.createElement('a-box');
       hazard.setAttribute('width', '3');
@@ -73,6 +83,7 @@ AFRAME.registerComponent('platform-generator', {
       this.platforms.push(hazard);
     });
 
+    // 💚 Health pickups
     chance(0.15, () => {
       const health = document.createElement('a-entity');
       const x = (Math.random() * 26) - 13;

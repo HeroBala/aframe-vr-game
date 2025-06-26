@@ -2,7 +2,6 @@ AFRAME.registerComponent('character', {
   init() {
     console.log('✅ Character initialized');
 
-    // Directional velocity vectors
     this.directions = {
       back: new CANNON.Vec3(0, 0, 4),
       right: new CANNON.Vec3(4, 0, 0),
@@ -15,43 +14,38 @@ AFRAME.registerComponent('character', {
     this.rotationY = 90;
     this.jumpCooldown = false;
     this.isJumping = false;
-    this.damageCooldown = false;
     this.health = 100;
+    this.characterModel = this.el.children[0];
+    this.damageCooldown = false;
 
     window.health = this.health;
-    this.characterModel = this.el.children[0];
 
-    // Set up input and collisions
-    document.addEventListener('keydown', this.onKeyDown.bind(this));
-    document.addEventListener('keyup', this.stop.bind(this));
-    this.el.addEventListener('collide', this.processCollision.bind(this));
+    // Input listeners
+    document.addEventListener('keydown', e => this.onKeyDown(e));
+    document.addEventListener('keyup', () => this.stop());
+
+    this.el.addEventListener('collide', e => this.processCollision(e));
   },
 
-  onKeyDown(event) {
-    const keyMap = {
+  onKeyDown(e) {
+    const map = {
       ArrowLeft: 'left',
       ArrowRight: 'right',
       ArrowUp: 'front',
-      ArrowDown: 'back',
+      ArrowDown: 'back'
     };
-
-    if (event.code === 'Space') {
-      this.jump();
-    } else if (keyMap[event.key]) {
-      this.startRunning(keyMap[event.key]);
-    }
+    if (e.code === 'Space') this.jump();
+    if (map[e.key]) this.startRunning(map[e.key]);
   },
 
-  startRunning(direction) {
-    const previousDirection = this.direction;
-    this.direction = direction;
+  startRunning(dir) {
+    const prev = this.direction;
+    this.direction = dir;
 
-    const directions = Object.keys(this.directions);
-    const directionChange = ((directions.indexOf(direction) - directions.indexOf(previousDirection) + 4) % 4);
-    this.rotationY = (this.rotationY + directionChange * 90) % 360;
-    this.velocity = this.directions[direction];
+    const diff = ((Object.keys(this.directions).indexOf(dir) - Object.keys(this.directions).indexOf(prev) + 4) % 4);
+    this.rotationY = (this.rotationY + diff * 90) % 360;
+    this.velocity = this.directions[dir];
 
-    // Rotate character visually
     this.characterModel.setAttribute('animation', {
       property: 'rotation',
       to: { x: 0, y: this.rotationY, z: 0 },
@@ -59,7 +53,6 @@ AFRAME.registerComponent('character', {
       easing: 'easeOutQuad'
     });
 
-    // Play running animation
     this.characterModel.setAttribute('animation-mixer', {
       clip: 'run',
       crossFadeDuration: 0.2
@@ -68,8 +61,6 @@ AFRAME.registerComponent('character', {
 
   stop() {
     this.velocity = null;
-
-    // Play idle animation
     this.characterModel.setAttribute('animation-mixer', {
       clip: 'idle',
       crossFadeDuration: 0.2
@@ -77,10 +68,26 @@ AFRAME.registerComponent('character', {
   },
 
   jump() {
-    if (this.jumpCooldown || !this.el.body) return;
+    if (this.jumpCooldown || !this.el.body || this.isJumping === true) return;
+
+    const origin = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(origin);
+    const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0), 0, 1.1);
+
+    // Filter to hit only `.ground`
+    const groundMeshes = [];
+    this.el.sceneEl.object3D.traverse(obj => {
+      if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
+        groundMeshes.push(obj);
+      }
+    });
+
+    const hits = ray.intersectObjects(groundMeshes, true);
+    if (hits.length === 0) return;
 
     this.el.body.velocity.y = 6;
     this.jumpCooldown = true;
+    this.isJumping = true;
 
     this.characterModel.setAttribute('animation-mixer', {
       clip: 'jump',
@@ -96,39 +103,41 @@ AFRAME.registerComponent('character', {
     const pos = new THREE.Vector3();
     this.el.object3D.getWorldPosition(pos);
 
-    // Detect falling out of bounds
     if (pos.y < -5) {
       document.getElementById('game-over').style.display = 'block';
       this.el.removeAttribute('character');
       return;
     }
 
-    // Ground detection
+    // Check if grounded
     const ray = new THREE.Raycaster(pos, new THREE.Vector3(0, -1, 0), 0, 1.1);
-    const intersections = ray.intersectObjects(this.el.sceneEl.object3D.children, true);
-    this.isJumping = intersections.length === 0;
+    const groundMeshes = [];
+    this.el.sceneEl.object3D.traverse(obj => {
+      if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
+        groundMeshes.push(obj);
+      }
+    });
+    const hits = ray.intersectObjects(groundMeshes, true);
+    this.isJumping = hits.length === 0;
 
-    // Apply directional velocity if moving
     if (this.velocity && this.el.body) {
       this.el.body.velocity.x = this.velocity.x;
       this.el.body.velocity.z = this.velocity.z;
     }
   },
 
-  processCollision(event) {
-    const collidedBody = event.detail.body;
-    const isObstacle = collidedBody?.el?.hasAttribute('obstacle');
+  processCollision(e) {
+    const body = e.detail.body;
+    if (!body?.el?.hasAttribute('obstacle') || this.damageCooldown) return;
 
-    if (!isObstacle || this.damageCooldown) return;
-
-    this.damageCooldown = true;
     this.isJumping = false;
+    this.damageCooldown = true;
     this.health -= 30;
     window.health = this.health;
 
-    const healthDisplay = document.querySelector('#healthText');
-    if (healthDisplay) {
-      healthDisplay.setAttribute('text', 'value', `Health: ${this.health}`);
+    const healthText = document.querySelector('#healthText');
+    if (healthText) {
+      healthText.setAttribute('text', 'value', `Health: ${this.health}`);
     }
 
     if (this.health <= 0) {
@@ -139,6 +148,6 @@ AFRAME.registerComponent('character', {
       this.damageCooldown = false;
     }, 1500);
 
-    collidedBody.el.emit('collide-with-character');
+    body.el.emit('collide-with-character');
   }
 });
