@@ -20,7 +20,14 @@ window.score = 0;
 window.health = 100;
 
 document.querySelector('#app').innerHTML = `
-  <div id="game-over" style="display: none;">You lost!</div>
+ <div id="game-over" style="display: none;">You lost!
+ <br><button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px; font-size: 1em;">Play Again</button>
+</div>
+<div id="win-screen" style="display: none; position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,128,0,0.9); color: white; padding: 40px 60px; border-radius: 20px; z-index: 1000; font-size: 2em; text-align: center;">
+  🎉 You Won! 🎉<br><br>You Completed this level<br><br>
+  <button onclick="location.reload()" style="padding: 10px 20px; margin-top: 20px; font-size: 1em;">Play Next Level</button>
+</div>
+
 
   <a-scene physics="debug: false">
     <a-assets>
@@ -54,5 +61,6 @@ document.querySelector('#app').innerHTML = `
         <a-entity id="healthText" position="-0.8 0.5 -1.5" text="value: Health: 100; color: red; width: 2; align: left"></a-entity>
       </a-entity>
     </a-entity>
+
   </a-scene>
 `;

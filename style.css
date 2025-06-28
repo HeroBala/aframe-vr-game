@@ -30,3 +30,13 @@ body, #app {
   padding: 3em;
   border-radius: 10%;
 }
+#winScreen {
+  position: fixed;
+  z-index: 2;
+  display: none;
+  background: rgba(255, 0, 0, 0.5);
+  color: white;
+  font-size: 3em;
+  padding: 3em;
+  border-radius: 10%;
+}

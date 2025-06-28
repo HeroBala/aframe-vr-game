@@ -40,15 +40,15 @@ AFRAME.registerComponent('platform-generator', {
     box.setAttribute('static-body', '');
     box.setAttribute('position', `0 ${y} ${z}`);
     box.setAttribute('material', 'src: #grass');
-    box.setAttribute('class', 'ground'); // ✅ Needed for jump detection
+    box.setAttribute('class', 'ground');
+    box.setAttribute('platform-index', i); // ✅ Add platform index
     this.el.appendChild(box);
     this.platforms.push(box);
 
-    // === Optional Random Elements ===
     const chance = (r, cb) => Math.random() < r && cb();
 
     // 💰 Coins
-    chance(0.5, () => {
+    chance(0.9, () => {
       const coin = document.createElement('a-entity');
       const x = (Math.random() * 26) - 13;
       coin.setAttribute('gltf-model', '#coin');
@@ -62,7 +62,7 @@ AFRAME.registerComponent('platform-generator', {
     });
 
     // 🧟 Zombies
-    if (i > 0 && Math.random() < 0.6) {
+    if (i > 0 && Math.random() < 1.9) {
       const zombie = document.createElement('a-entity');
       zombie.setAttribute('zombie', { y, z });
       this.el.appendChild(zombie);
@@ -70,7 +70,7 @@ AFRAME.registerComponent('platform-generator', {
     }
 
     // 🔥 Damage zones
-    chance(0.3, () => {
+    chance(0.5, () => {
       const hazard = document.createElement('a-box');
       hazard.setAttribute('width', '3');
       hazard.setAttribute('height', '0.05');
@@ -84,7 +84,7 @@ AFRAME.registerComponent('platform-generator', {
     });
 
     // 💚 Health pickups
-    chance(0.15, () => {
+    chance(0.5, () => {
       const health = document.createElement('a-entity');
       const x = (Math.random() * 26) - 13;
       health.setAttribute('gltf-model', '#health');

@@ -24,7 +24,26 @@ AFRAME.registerComponent('character', {
     document.addEventListener('keydown', e => this.onKeyDown(e));
     document.addEventListener('keyup', () => this.stop());
 
-    this.el.addEventListener('collide', e => this.processCollision(e));
+    this.el.addEventListener('collide', e => {
+      const collidedEl = e.detail.body?.el;
+      if (!collidedEl) return;
+
+      // ✅ Detect collision with ground platforms
+      if (collidedEl.classList.contains('ground')) {
+        const index = parseInt(collidedEl.getAttribute('platform-index'));
+        console.log('➡️ Collided with platform:', index);
+
+        if (index === 10) {
+          console.log('🎉 Reached platform 10!');
+          const winScreen = document.getElementById('win-screen');
+          if (winScreen) {
+            winScreen.style.display = 'block';
+          }
+        }
+      }
+
+      this.processCollision(e);
+    });
   },
 
   onKeyDown(e) {
@@ -68,57 +87,55 @@ AFRAME.registerComponent('character', {
   },
 
   jump() {
-  if (this.jumpCooldown || !this.el.body ) return;
+    if (this.jumpCooldown || !this.el.body) return;
 
-  this.el.body.velocity.y = 6;
-  this.jumpCooldown = true;
+    this.el.body.velocity.y = 7;
+    this.jumpCooldown = true;
 
-  this.characterModel.setAttribute('animation-mixer', {
-    clip: 'jump',
-    crossFadeDuration: 0.2
-  });
+    this.characterModel.setAttribute('animation-mixer', {
+      clip: 'jump',
+      crossFadeDuration: 0.2
+    });
 
-  setTimeout(() => {
-    this.jumpCooldown = false;
-  }, 700);
-},
+    setTimeout(() => {
+      this.jumpCooldown = false;
+    }, 700);
+  },
 
-tick() {
-  const pos = new THREE.Vector3();
-  this.el.object3D.getWorldPosition(pos);
+  tick() {
+    const pos = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(pos);
 
-  // Game over on fall
-  if (pos.y < -5) {
-    document.getElementById('game-over').style.display = 'block';
-    this.el.removeAttribute('character');
-    return;
-  }
-
-  // Movement logic
-  if (this.velocity && this.el.body) {
-    this.el.body.velocity.x = this.velocity.x;
-    this.el.body.velocity.z = this.velocity.z;
-  }
-},
-
-// Custom ground detection
-_isGrounded() {
-  const origin = new THREE.Vector3();
-  this.el.object3D.getWorldPosition(origin);
-
-  const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0), 0, 1.1);
-  const groundMeshes = [];
-
-  this.el.sceneEl.object3D.traverse(obj => {
-    if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
-      groundMeshes.push(obj);
+    // Game over if player falls below
+    if (pos.y < -5) {
+      document.getElementById('game-over').style.display = 'block';
+      this.el.removeAttribute('character');
+      return;
     }
-  });
 
-  const hits = ray.intersectObjects(groundMeshes, true);
-  return hits.length > 0;
-}
-,
+    // Move character
+    if (this.velocity && this.el.body) {
+      this.el.body.velocity.x = this.velocity.x;
+      this.el.body.velocity.z = this.velocity.z;
+    }
+  },
+
+  _isGrounded() {
+    const origin = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(origin);
+
+    const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0), 0, 1.1);
+    const groundMeshes = [];
+
+    this.el.sceneEl.object3D.traverse(obj => {
+      if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
+        groundMeshes.push(obj);
+      }
+    });
+
+    const hits = ray.intersectObjects(groundMeshes, true);
+    return hits.length > 0;
+  },
 
   processCollision(e) {
     const body = e.detail.body;

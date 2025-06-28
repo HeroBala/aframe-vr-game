@@ -31,16 +31,27 @@ AFRAME.registerComponent('score-system', {
         localStorage.setItem('highScore', window.score);
       }
 
+      // ✅ WIN CONDITION
+      if (window.score >= 20) { // Adjust this threshold based on your point scale
+        const winScreen = document.querySelector('#winScreen');
+        if (winScreen) {
+          winScreen.setAttribute('visible', true); // A-Frame visibility
+        }
+
+        // Optional: disable controls or stop game logic
+        console.log('[Score System] 🎉 You won!');
+      }
+
       // ✅ Disable and remove orb
       this.orbEl.setAttribute('visible', false); // Hide
       this.orbEl.removeAttribute('score-system'); // Prevent further use
 
-      // Remove physics body properly
+      // ✅ Remove physics body properly
       if (this.orbEl.body && this.el.sceneEl.systems.physics) {
         this.el.sceneEl.systems.physics.world.removeBody(this.orbEl.body);
       }
 
-      // Fully remove from DOM after a short delay (optional for cleanup)
+      // ✅ Fully remove from DOM after a short delay
       setTimeout(() => {
         if (this.orbEl.parentNode) {
           this.orbEl.parentNode.removeChild(this.orbEl);
