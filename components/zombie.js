@@ -18,7 +18,7 @@ AFRAME.registerComponent('zombie', {
     zombie.setAttribute('scale', '0.3 0.3 0.3');
     zombie.setAttribute('position', `${startX} ${zombieY} ${walkZ}`);
     zombie.setAttribute('animation-mixer', 'clip: *; loop: repeat');
-    zombie.setAttribute('dynamic-body', 'mass:1; shape: box;');
+    zombie.setAttribute('dynamic-body', 'mass:1; shape: box; angularDamping: 1;');
 
     // 🧠 ADD THESE TWO LINES:
     zombie.setAttribute('zombie-kill', 'damage: 30');

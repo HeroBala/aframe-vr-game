@@ -68,63 +68,57 @@ AFRAME.registerComponent('character', {
   },
 
   jump() {
-    if (this.jumpCooldown || !this.el.body || this.isJumping === true) return;
+  if (this.jumpCooldown || !this.el.body ) return;
 
-    const origin = new THREE.Vector3();
-    this.el.object3D.getWorldPosition(origin);
-    const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0), 0, 1.1);
+  this.el.body.velocity.y = 6;
+  this.jumpCooldown = true;
 
-    // Filter to hit only `.ground`
-    const groundMeshes = [];
-    this.el.sceneEl.object3D.traverse(obj => {
-      if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
-        groundMeshes.push(obj);
-      }
-    });
+  this.characterModel.setAttribute('animation-mixer', {
+    clip: 'jump',
+    crossFadeDuration: 0.2
+  });
 
-    const hits = ray.intersectObjects(groundMeshes, true);
-    if (hits.length === 0) return;
+  setTimeout(() => {
+    this.jumpCooldown = false;
+  }, 700);
+},
 
-    this.el.body.velocity.y = 6;
-    this.jumpCooldown = true;
-    this.isJumping = true;
+tick() {
+  const pos = new THREE.Vector3();
+  this.el.object3D.getWorldPosition(pos);
 
-    this.characterModel.setAttribute('animation-mixer', {
-      clip: 'jump',
-      crossFadeDuration: 0.2
-    });
+  // Game over on fall
+  if (pos.y < -5) {
+    document.getElementById('game-over').style.display = 'block';
+    this.el.removeAttribute('character');
+    return;
+  }
 
-    setTimeout(() => {
-      this.jumpCooldown = false;
-    }, 700);
-  },
+  // Movement logic
+  if (this.velocity && this.el.body) {
+    this.el.body.velocity.x = this.velocity.x;
+    this.el.body.velocity.z = this.velocity.z;
+  }
+},
 
-  tick() {
-    const pos = new THREE.Vector3();
-    this.el.object3D.getWorldPosition(pos);
+// Custom ground detection
+_isGrounded() {
+  const origin = new THREE.Vector3();
+  this.el.object3D.getWorldPosition(origin);
 
-    if (pos.y < -5) {
-      document.getElementById('game-over').style.display = 'block';
-      this.el.removeAttribute('character');
-      return;
+  const ray = new THREE.Raycaster(origin, new THREE.Vector3(0, -1, 0), 0, 1.1);
+  const groundMeshes = [];
+
+  this.el.sceneEl.object3D.traverse(obj => {
+    if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
+      groundMeshes.push(obj);
     }
+  });
 
-    // Check if grounded
-    const ray = new THREE.Raycaster(pos, new THREE.Vector3(0, -1, 0), 0, 1.1);
-    const groundMeshes = [];
-    this.el.sceneEl.object3D.traverse(obj => {
-      if (obj.el && obj.el.classList && obj.el.classList.contains('ground')) {
-        groundMeshes.push(obj);
-      }
-    });
-    const hits = ray.intersectObjects(groundMeshes, true);
-    this.isJumping = hits.length === 0;
-
-    if (this.velocity && this.el.body) {
-      this.el.body.velocity.x = this.velocity.x;
-      this.el.body.velocity.z = this.velocity.z;
-    }
-  },
+  const hits = ray.intersectObjects(groundMeshes, true);
+  return hits.length > 0;
+}
+,
 
   processCollision(e) {
     const body = e.detail.body;
